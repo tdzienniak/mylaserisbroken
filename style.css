@@ -1,0 +1,256 @@
+body {
+    background: black;
+}
+
+canvas {
+    border: 2px dashed white;
+    margin: 0px auto;
+    /*display: block;*/
+}
+
+.screen {
+    width: 800px;
+    height: 600px;
+    margin: 10px auto;
+    display: none;
+}
+
+.loading-text {
+    font-family: 'Inconsolata', monospace;
+    color: white;
+    text-shadow: 0px 0px 4px white;
+}
+
+#blinking-cursor {
+    -webkit-animation-delay: 0s;
+    -moz-animation-delay: 0s;
+    -o-animation-delay: 0s;
+    animation-delay: 0s;
+    -webkit-animation-duration: 0.5s;
+    -moz-animation-duration: 0.5s;
+    -o-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    -webkit-animation-name: blink;
+    -moz-animation-name: blink;
+    -o-animation-name: blink;
+    animation-name: blink;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+        
+    opacity: 0;
+    background-color: white;
+}
+
+@-webkit-keyframes blink {
+    from {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@-moz-keyframes blink {
+    from {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+#loading-screen {
+    height: 100%;
+    width: 100%;
+}
+
+#loading-info {
+    width: 300px;
+    margin: 0px auto;
+    margin-top: 20%;
+}
+
+#loading-text {
+    width: 300px;
+    text-align: center;
+    font-family: 'Audiowide', monospace;
+    color: white;
+    font-size: 14pt;
+
+    padding: 10px 0px;
+}
+
+#progress-bar {
+    width: 300px;
+    height: 10px;
+}
+
+#current-progress {
+    width: 0px;
+    height: 10px;
+    background: white;
+    box-shadow: 0px 0px 5px white;
+}
+
+#menu-screen {
+    display: none;
+    width: 800px;
+    height: 600px;
+    margin: 10px auto;
+
+}
+
+#menu-screen > .game-title {
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 5px 0px;
+    color: white;
+    font-family: 'Audiowide', sans-serif;
+    font-size: 16pt;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+    margin-bottom: 50px;
+}
+
+#menu-screen > .game-title > span {
+    font-size: 14pt;
+    color: gray;
+}
+
+#menu-screen > .menu-item {
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 5px 0px;
+    color: white;
+    font-family: 'Audiowide', sans-serif;
+    font-size: 14pt;
+    margin-bottom: 10px;
+}
+
+#menu-screen > .menu-item:hover {
+    color: gray;
+    cursor: pointer;
+}
+
+/* INTRO SCREEN --------------------------------- */
+#intro-screen {
+    text-align: left;
+}
+
+.console {
+    font-family: 'Inconsolata', monospace;
+    color: #13E800;
+    text-shadow: 0px 0px 4px #13E800;
+}
+
+/*LEVEL SCREEN */
+
+.level-title {
+    color: white;
+    padding-top: 50px;
+    font-family: 'Audiowide', sans-serif;
+    font-size: 16pt;
+    text-align: center;
+}
+
+.level-subtitle {
+    color: white;
+    padding: 10px 0px;
+    font-family: 'Audiowide', sans-serif;
+    font-size: 13pt;
+    text-align: center;
+}
+
+
+#game-screen {
+    display: none;
+    width: 800px;
+    height: 600px;
+    margin: 10px auto;
+    position: relative;
+}
+
+/**-----------------------------------**/
+#ui-points {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: white;
+    padding: 5px 10px;
+    font-family: 'Audiowide', sans-serif;
+    font-size: 14pt;
+}
+
+.gameover-title {
+    color: red;
+    padding: 5px 0px;
+    font-family: 'Audiowide', sans-serif;
+    font-size: 16pt;
+}
+
+.gameover-text {
+    /*width: 500px;*/
+    padding: 0px 100px;
+    color: white;
+    font-family: 'Inconsolata', monospace;
+    font-size: 14pt;
+}
+
+.winner-title {
+    color: green;
+    padding: 5px 0px;
+
+    font-family: 'Audiowide', sans-serif;
+    font-size: 16pt;
+}
+
+.winner-text {
+    color: white;
+    padding: 0px 100px;
+    font-family: 'Inconsolata', monospace;
+    font-size: 14pt;
+}
+
+#credits-screen {
+    display: none;
+}
+
+#instructions {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 250px;
+    color: white;
+    font-family: 'Inconsolata', monospace;
+}
+
+#footer {
+    position: fixed;
+    right: 0px;
+    bottom: 0px;
+    font-family: 'Inconsolata', monospace;
+    color: white;
+    font-size: 10pt;
+    padding: 5px 5px;
+}
+
+#footer > span {
+    background: white;
+    color: black;
+    border-radius: 2px;
+    padding: 2px 3px;
+}

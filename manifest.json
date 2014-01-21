@@ -1,0 +1,30 @@
+{
+    "manifest": [
+        "libs/pixi.min.js",
+        "../Entropy_github/build/entropy.js",
+        "src/statesii.js",
+        "src/patterns.js",
+        "src/systemsii.js",
+        "src/components.js",
+        {
+            "src": "assets/ship2.png",
+            "id": "PlayerShip"
+        },
+        {
+            "src": "assets/gun.png",
+            "id": "PlayerGun"
+        },
+        {
+            "src": "assets/bullet.png",
+            "id": "Bullet"
+        },
+        {
+            "src": "assets/alien.png",
+            "id": "Alien"
+        },
+        {
+            "src": "assets/powerup.png",
+            "id": "PowerUp"
+        }
+    ]
+}

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My laser is broken! - HTML5 game powered by Entropy</title>
+    <link href='http://fonts.googleapis.com/css?family=Audiowide&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="style.css">
+    <style>
+
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <div id="loading-info">
+            <div id="loading-text">Ładowanie...</div>
+            <div id="progress-bar"><div id="current-progress"></div></div>
+        </div>
+        
+        <!-- <span class="loading-text"></span><span id="blinking-cursor">&ensp;</span> -->
+    </div>
+    <div id="menu-screen">
+        <div class="game-title">Mój laser jest spieprzony!<br />
+        <span>My laser is fucked up!</span></div>
+        <div class="menu-item new-game">Nowa gra</div>
+        <div class="menu-item">Autorzy</div>
+    </div>
+    <div id="intro-screen" class="screen">
+        <span class="console"></span><span id="blinking-cursor">&ensp;</span>
+    </div>
+    <div id="level1-screen" class="screen">
+        <p class="level-title">Poziom 1</p>
+        <p class="level-subtitle">"Bliskie spotkania trzeciego stopnia"</p>
+    </div>
+    <div id="game-screen">
+        <div id="ui-points"></div>
+    </div>
+    <div id="credits-screen">
+        <div id="credits-wrapper">
+        <p class="title">Mój laser się spieprzył aka My laser has fucked up<br />The Game</p>
+        <p class="category">Pomysł i projektowanie:</p>
+        <p class="person">Tymoteusz Dzienniak</p>
+        <p class="category">Programowanie:</p>
+        <p class="person">Tymoteusz Dzienniak</p>
+        <p class="category">Grafika:</p>
+        <p class="person">Tymoteusz Dzienniak</p>
+        <p>Podziękowania dla całego Warsztatu (a w szczególności dla Tanner'a, Dark Engineer'a, Goliatus'a, kaban'a i innych).<br />https://gamedev.pl</p>
+        </div>
+
+        <!-- <span class="credits-console"></span><span id="blinking-cursor">&ensp;</span> -->
+    </div>
+    <div id="gameover-screen" class="screen">
+        <p class="gameover-title">Gra skończona!</p>
+        <p class="gameover-text">Złamałeś serce przyjacielom z Kosmosu. Zwątpili w swoją pełną miłości postawę wobec innych cywilizacji i zmienili się w żądne krwi kreatury, siejące śmierć i zniszczenie po najdalsze krańce galaktyki. Teraz nazwyają siebie Żniwiażami. Gratulacje!</p>
+    </div>
+    <div id="winner-screen" class="screen">
+        <p class="winner-title">Misja zakończona sukcesem!</p>
+        <p class="winner-text">Udało Ci się uratować wszystkich Obcych. Twoja ciężka praca została nagrodzona uśmiechem i podaniem ręki przez chorą psychicznie istotę z innej planety. Hurra!</p>
+    </div>
+    <div id="footer">
+        powered by <span>Entropy</span>
+    </div>
+</body>
+<script src="libs/preloadjs.min.js"></script>
+<script src="libs/jquery.min.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
+<script>
+    var game;
+
+    window.addEventListener("load", function (e) {
+
+        var load_queue = new createjs.LoadQueue(true);
+        var loading_progress = $("#current-progress")[0];
+        var loading_info = $("#loading-info")[0];
+        loading_info.style.marginTop = (window.innerHeight * 0.45) + "px";
+
+        load_queue.loadFile({
+            src: "manifest.json",
+            type: createjs.LoadQueue.MANIFEST
+        });
+
+        load_queue.on("fileload", function (e) {
+            if (e.item.type === createjs.LoadQueue.IMAGE) {
+                var baseTexture = new PIXI.BaseTexture(e.result);
+                var texture = new PIXI.Texture(baseTexture);
+                PIXI.Texture.addTextureToCache(texture, e.item.id);
+            }
+        });
+
+        load_queue.on("progress", function (e) {
+            loading_progress.style.width =  (e.progress * 300) + "px";
+        });
+
+        load_queue.on("complete", function (e) {
+            /*var el = $(".loading-text")[0];
+
+            queue(1)
+                .defer(writeText, "Preparing broken lasers...\n", el, 70)
+                .defer(delay, 500)
+                .defer(writeText, "Loading ASCII porn...\n", el, 70)
+                .defer(delay, 500)
+                .defer(writeText, "Preparing pizzas for aliens...\n", el, 70)
+                .defer(delay, 500)
+                .defer(writeText, "Preparing DDOS attack on gamedev.pl...\n", el, 70)
+                .defer(delay, 500)
+                .defer(writeText, "Destroying the Universe...\n", el, 70)
+                .defer(delay, 500)
+                .defer(writeText, "KERNEL PANIC!!!!!!!!!!!!!!!!1\n", el, 70)
+                .defer(delay, 500)
+                .defer(writeText, "I was joking. :)\n", el, 70)
+                .defer(delay, 100)
+                .defer(writeText, "Everything loaded.", el, 70);*/
+
+            game = new Entropy.Game("initialize");
+        });
+
+    });
+
+    /*function handleVisibilityChange() {
+        if (document.webkitHidden) {
+            game.pause();
+        } else {
+            game.resume();
+        }
+    }
+
+    document.addEventListener("webkitvisibilitychange", handleVisibilityChange, false);*/
+
+    function writeText (text, element, interval, callback) {
+        var i = 0;
+
+        var interval_id = window.setInterval(function () {
+            if (i < text.length) {
+                element.append((text[i] == "\n") ? "<br />" : text[i]);
+            } else {
+                window.clearInterval(interval_id)
+                callback();
+            }
+
+            i++;
+        }, interval);
+    }
+
+    function writeLines (lines, element, interval, callback) {
+        var i = 0;
+
+        var interval_id = window.setInterval(function () {
+            if (i < lines.length) {
+                //element
+                if ("innerText" in element) {
+                    element.innerText += lines[i] + "\n";
+                } else {
+                    element.textContent += lines[i] + "\n";
+                }
+            } else {
+                window.clearInterval(interval_id)
+                callback();
+            }
+
+            i++;
+        }, interval);   
+    }
+
+    function delay (time, callback) {
+        setTimeout(function () {
+            callback();
+        }, time);
+    }
+
+    function distance(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+</script>
+</html>
