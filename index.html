@@ -28,9 +28,9 @@
     <div id="intro-screen" class="screen">
         <span class="console"></span><span id="blinking-cursor">&ensp;</span>
     </div>
-    <div id="level1-screen" class="screen">
-        <p class="level-title">Poziom 1</p>
-        <p class="level-subtitle">"Bliskie spotkania trzeciego stopnia"</p>
+    <div id="level-screen" class="screen">
+        <p class="level-title"></p>
+        <p class="level-subtitle"></p>
     </div>
     <div id="game-screen">
         <div id="ui-points"></div>
@@ -51,7 +51,7 @@
     </div>
     <div id="gameover-screen" class="screen">
         <p class="gameover-title">Gra skończona!</p>
-        <p class="gameover-text">Złamałeś serce przyjacielom z Kosmosu. Zwątpili w swoją pełną miłości postawę wobec innych cywilizacji i zmienili się w żądne krwi kreatury, siejące śmierć i zniszczenie po najdalsze krańce galaktyki. Teraz nazwyają siebie Żniwiażami. Gratulacje!</p>
+        <p class="gameover-text">Złamałeś serce przyjacielom z Kosmosu. Zwątpili w swoją pełną miłości postawę wobec innych cywilizacji i zmienili się w żądne krwi kreatury, siejące śmierć i zniszczenie po najdalsze krańce Galaktyki. Teraz nazywają siebie Żniwiarzami. Gratulacje!</p>
     </div>
     <div id="winner-screen" class="screen">
         <p class="winner-title">Misja zakończona sukcesem!</p>
@@ -92,25 +92,6 @@
         });
 
         load_queue.on("complete", function (e) {
-            /*var el = $(".loading-text")[0];
-
-            queue(1)
-                .defer(writeText, "Preparing broken lasers...\n", el, 70)
-                .defer(delay, 500)
-                .defer(writeText, "Loading ASCII porn...\n", el, 70)
-                .defer(delay, 500)
-                .defer(writeText, "Preparing pizzas for aliens...\n", el, 70)
-                .defer(delay, 500)
-                .defer(writeText, "Preparing DDOS attack on gamedev.pl...\n", el, 70)
-                .defer(delay, 500)
-                .defer(writeText, "Destroying the Universe...\n", el, 70)
-                .defer(delay, 500)
-                .defer(writeText, "KERNEL PANIC!!!!!!!!!!!!!!!!1\n", el, 70)
-                .defer(delay, 500)
-                .defer(writeText, "I was joking. :)\n", el, 70)
-                .defer(delay, 100)
-                .defer(writeText, "Everything loaded.", el, 70);*/
-
             game = new Entropy.Game("initialize");
         });
 
@@ -126,49 +107,5 @@
 
     document.addEventListener("webkitvisibilitychange", handleVisibilityChange, false);*/
 
-    function writeText (text, element, interval, callback) {
-        var i = 0;
-
-        var interval_id = window.setInterval(function () {
-            if (i < text.length) {
-                element.append((text[i] == "\n") ? "<br />" : text[i]);
-            } else {
-                window.clearInterval(interval_id)
-                callback();
-            }
-
-            i++;
-        }, interval);
-    }
-
-    function writeLines (lines, element, interval, callback) {
-        var i = 0;
-
-        var interval_id = window.setInterval(function () {
-            if (i < lines.length) {
-                //element
-                if ("innerText" in element) {
-                    element.innerText += lines[i] + "\n";
-                } else {
-                    element.textContent += lines[i] + "\n";
-                }
-            } else {
-                window.clearInterval(interval_id)
-                callback();
-            }
-
-            i++;
-        }, interval);   
-    }
-
-    function delay (time, callback) {
-        setTimeout(function () {
-            callback();
-        }, time);
-    }
-
-    function distance(x1, y1, x2, y2) {
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    }
 </script>
 </html>

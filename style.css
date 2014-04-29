@@ -192,7 +192,8 @@ canvas {
     color: white;
     padding: 5px 10px;
     font-family: 'Audiowide', sans-serif;
-    font-size: 14pt;
+    font-size: 12pt;
+    text-shadow: 0px 0px 3px #FFF;   
 }
 
 .gameover-title {

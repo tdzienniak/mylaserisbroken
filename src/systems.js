@@ -1,5 +1,7 @@
-Entropy.Engine.system("Render", {
-    init: function () {
+Entropy.Engine.System({
+    name: "Render",
+    initialize: function () {
+
         this.stage = this.game.stage;
         this.renderer = this.game.renderer;
     },
@@ -8,20 +10,20 @@ Entropy.Engine.system("Render", {
     }
 });
 
-Entropy.Engine.system("Motion", {
+Entropy.Engine.System({
+    name: "Motion",
     update: function (delta, event) {
-        var es = this.game.engine.getFamily("Moveable");
-
-        for (var i = 0, len = es.length; i < len; i++) {
-            var e = es[i].components;
-            
-            e.position.x += delta / 1000 * e.velocity.v.x;
-            e.position.y += delta / 1000 * e.velocity.v.y;
-        }
+        var moveable = this.game.engine.getFamily("Moveable");
+        
+        moveable.iterate(function (m, mc) {
+            mc.position.x += delta / 1000 * mc.velocity.v.x;
+            mc.position.y += delta / 1000 * mc.velocity.v.y;
+        }, this);
     }
 });
 
-Entropy.Engine.system("BoundingCollision", {
+Entropy.Engine.System({
+    name: "BoundingCollision",
     update: function (delta) {
         var es = this.game.engine.getEntitiesWith(["Position"]);
         var e;
@@ -32,26 +34,25 @@ Entropy.Engine.system("BoundingCollision", {
             b_i = e.position.boundings_interaction;
 
             if (b_i && e.position.x < 0) {
-                e.position.x += Entropy.Game.WIDTH;
-            } else if (b_i && e.position.x > Entropy.Game.WIDTH) {
-                e.position.x -= Entropy.Game.WIDTH;
+                e.position.x += Entropy.WIDTH;
+            } else if (b_i && e.position.x > Entropy.WIDTH) {
+                e.position.x -= Entropy.WIDTH;
             }
 
             if (b_i && e.position.y < 0) {
-                e.position.y += Entropy.Game.HEIGHT;
-            } else if (b_i && e.position.y > Entropy.Game.HEIGHT) {
-                e.position.y -= Entropy.Game.HEIGHT;
+                e.position.y += Entropy.HEIGHT;
+            } else if (b_i && e.position.y > Entropy.HEIGHT) {
+                e.position.y -= Entropy.HEIGHT;
             }
         }
     }
 });
 
-Entropy.Engine.system("SpritePosition", {
-   update: function (delta) {
+Entropy.Engine.System({
+    name: "SpritePosition",
+    update: function (delta) {
         var es = this.game.engine.getEntitiesWith(["Sprite", "Position", "Rotation"]);
         var e;
-
-        //debugger;
 
         for (var i = 0, max = es.length; i < max; i++) {
             e = es[i].components;
@@ -63,10 +64,11 @@ Entropy.Engine.system("SpritePosition", {
    }
 });
 
-Entropy.Engine.system("PlayerShipSteering", {
+Entropy.Engine.System({
+    name: "PlayerShipSteering",
     update: function (delta) {
         var mouse_position = this.game.input.getMouseStagePosition();
-        var player = this.game.engine.getFamily("Player")[0].components;
+        var player = this.game.engine.getFamily("Player").one().components;
         var max_speed = 250;
 
         var vector = new Entropy.Vector([mouse_position.x - player.position.x, mouse_position.y - player.position.y]);
@@ -81,41 +83,25 @@ Entropy.Engine.system("PlayerShipSteering", {
     }
 });
 
-Entropy.Engine.system("PlayerShipControl", {
-    init: function () {
+Entropy.Engine.System({
+    name: "PlayerShipControl",
+    initialize: function () {
         this.acc = new Entropy.Vector({angle: 0, length: 10});
     },
     update: function (delta) {
-        var player = this.game.engine.getFamily("Player")[0].components;
+        var player = this.game.engine.getFamily("Player").one().components;
         var pressedKeys = this.game.input.getPressedKeys();
         var max_speed = 250;
 
-        /*if (pressedKeys["W"]) {
-            this.acc.setAngle(player.rotation.vector.angle);
-            player.velocity.v.add(this.acc);
-        }*/
-        
         if (pressedKeys["W"]) {
-            /*vector = player.velocity.v.truncate(5, true);
-            player.velocity.v.add(vector);*/
-
             player.velocity.v.add([0, -7]);
-
         } else if (pressedKeys["S"]) {
-            /*vector = player.velocity.v.truncate(5, true).negate();
-            if (player.velocity.v.length > 5) {
-                player.velocity.v.add(vector);
-            } else {
-                player.velocity.v.truncate(0);
-            }*/
             player.velocity.v.add([0, 7]);
         }
 
         if (pressedKeys["A"]) {
-            /*player.velocity.v.rotate(-2);*/
             player.velocity.v.add([-7, 0]);
         } else if (pressedKeys["D"]) {
-           /* player.velocity.v.rotate(2);*/
            player.velocity.v.add([7, 0]);
         }
 
@@ -125,21 +111,23 @@ Entropy.Engine.system("PlayerShipControl", {
     }
 });
 
-Entropy.Engine.system("PlayerShipRotate", {
+Entropy.Engine.System({
+    name: "PlayerShipRotate",
     update: function (delta) {
         var mouse_position = this.game.input.getMouseStagePosition();
-        var player = this.game.engine.getFamily("Player")[0].components;
-        var gun = this.game.engine.getFamily("PlayerGun")[0].components;
+        var player = this.game.engine.getFamily("Player").one().components;
+        var gun = this.game.engine.getFamily("PlayerGun").one().components;
 
         player.rotation.vector.setAngle(player.velocity.v.angle);
     }
 });
 
-Entropy.Engine.system("PlayerGunPosition", {
+Entropy.Engine.System({
+    name: "PlayerGunPosition",
     update: function (delta) {
         var mouse_position = this.game.input.getMouseStagePosition();
-        var player = this.game.engine.getFamily("Player")[0].components;
-        var gun = this.game.engine.getFamily("PlayerGun")[0].components;
+        var player = this.game.engine.getFamily("Player").one().components;
+        var gun = this.game.engine.getFamily("PlayerGun").one().components;
 
         gun.position.x = player.position.x;
         gun.position.y = player.position.y;
@@ -150,296 +138,270 @@ Entropy.Engine.system("PlayerGunPosition", {
     }
 });
 
-Entropy.Engine.system("Weapon", {
+Entropy.Engine.System({
+    name: "Weapon",
     update: function (delta) {
-        var player = this.game.engine.getFamily("Player")[0].components;
-        var gun = this.game.engine.getFamily("PlayerGun")[0].components;
-        var bullet_lifetime = player.weapon.bullet_lifetime;
-        var x, y;
+        var player = this.engine.getFamily("Player").one().components;
+        var gun = this.engine.getFamily("PlayerGun").one().components;
+        var bullet_lifetime = player.stats.bullet_lifetime;
+        var bullet_velocity = player.stats.bullet_velocity;
+        var reload = 1000 / player.stats.rps;
 
-        player.weapon.loadingProgress += delta;// * player.weapon.gain;
+        player.weapon.loading_progress += delta;
 
-        if (player.weapon.loadingProgress >= player.weapon.reload) {
-            x = player.position.x + gun.rotation.vector.x;
-            y = player.position.y + gun.rotation.vector.y;
+        if (player.weapon.loading_progress >= reload) {
+            var x = player.position.x + gun.rotation.vector.x;
+            var y = player.position.y + gun.rotation.vector.y;
 
-            this.game.engine.create("Bullet", x, y, gun.rotation.vector.angle, bullet_lifetime);
+            this.game.engine.create("Bullet", x, y, gun.rotation.vector.angle, bullet_lifetime, bullet_velocity);
 
-            player.weapon.loadingProgress = 0;
+            player.weapon.loading_progress = 0;
         }
     }
 });
 
-Entropy.Engine.system("BulletLife", {
+Entropy.Engine.System({
+    name: "BulletLife",
     update: function (delta) {
-        var bullets = this.game.engine.getFamily("Bullets");
-        var b;
+        var bullets = this.engine.getFamily("Bullets");
 
-        for (var i = 0, max = bullets.length; i < max; i += 1) {
-            b = bullets[i].components.bullet;
+        bullets.iterate(function (be, bc) {
+            var b = bc.bullet;
+
+            b.lived_so_far += delta;
 
             if (b.lived_so_far > b.lifetime) {
-                this.game.engine.markForRemoval(bullets[i]);
-
-                this.game.engine.create("BulletExplosion", bullets[i].components.position.x, bullets[i].components.position.y);
-            } else {
-                b.lived_so_far += delta;
+                this.engine.markForRemoval(be);
+                this.engine.create("BulletExplosion", bc.position.x, bc.position.y);
             }
-        }
+        }, this);
     }
 });
 
-Entropy.Engine.system("EmitterController", {
+Entropy.Engine.System({
+    name: "EmitterController",
     update: function (delta) {
         var es = this.game.engine.getFamily("Emitters");
-        var e;
-        var emitter;
         var options = {};
-        var angle;
-        var velocity;
+        var angle, velocity;
+        var emitter, cps;
 
-        for (var i = 0, max = es.length; i < max; i++) {
-            e = es[i].components;
-            emitter = e.particleemitter;
+        var node = es.head;
+        while (node) {
+            emitter = node.data.components.particleemitter;
+            cps = node.data.components;
 
             options.lifetime = emitter.particle_lifetime;
             options.color = emitter.color;
-            options.alpha = 1;
-            options.length = emitter.length;
+
+            options.start_length = emitter.start_length;
             options.end_length = emitter.end_length;
+
+            options.start_alpha = 1;            
             options.end_alpha = emitter.end_alpha;
+
             options.end_velocity = emitter.end_velocity;
 
             options.length_easing = emitter.length_easing;
             options.velocity_easing = emitter.velocity_easing;
             options.alpha_easing = emitter.alpha_easing;
 
-            for (var j = 0; j < emitter.ppf; j++) {
+            for (var i = 0; i < emitter.ppf; i += 1) {
 
                 angle = emitter.angle_from + (Math.random() * (emitter.angle_to - emitter.angle_from));
                 velocity = emitter.velocity_from + (Math.random() * (emitter.velocity_to - emitter.velocity_from));
 
-                options.velocity = velocity;
+                options.start_velocity = velocity;
 
-
-                this.game.engine.create("Particle", e.position.x, e.position.y, angle, velocity, options);
+                this.engine.create("Particle", cps.position.x, cps.position.y, angle, velocity, options);
             }
 
-            if (emitter.lifetime !== 0) {
+            //if emitter is not eternal
+            if (emitter.lifetime !== -1) {
                 emitter.lived_so_far += delta;
+
+                if (emitter.lived_so_far > emitter.lifetime) {
+                    this.engine.markForRemoval(node.data);
+                }
             }
 
-            if (emitter.lived_so_far > emitter.lifetime) {
-                this.game.engine.markForRemoval(es[i]);
-            }
+            node = node.next;
         }
     }
 });
 
-Entropy.Engine.system("ParticleRenderer", {
-    init: function () {
+/*Entropy.Engine.System({
+name: "ParticleRenderer", {
+    initialize: function () {
         this.graphics = new PIXI.Graphics();
 
         this.game.stage.addChild(this.graphics);
     },
     update: function (delta) {
-        var es = this.game.engine.getFamily("Particles");
-        var e;
+        window.performance.mark('render_start');
+        var particles = this.engine.getFamily("Particles");
         var length;
-        var alpha;
-        var t;
-        var d;
-        var c;
+        var cps;
 
         this.graphics.clear();
 
-        for (var i = 0, max = es.length; i < max; i++) {
-            e = es[i].components;
-            t = e.particle.lived_so_far;
-            d = e.particle.lifetime;
+        var node = particles.head;
+        while (node) {
+            cps = node.data.components;
 
-            //console.log(e.particle.alpha_easing);
-            if (typeof e.particle.alpha_easing === "function") {
-                c = e.particle.end_alpha - e.particle.alpha;
+            length = cps.velocity.v.truncate(cps.particle.current_length, true);
+
+            this.graphics.lineStyle(2, cps.particle.color, cps.particle.current_alpha);
+            this.graphics.moveTo(cps.position.x, cps.position.y);
+            this.graphics.lineTo(cps.position.x + length.x, cps.position.y + length.y);
+
+            node = node.next;
+        }
+
+        window.performance.mark('render_end');
+
+        window.performance.measure('render', 'render_start', 'render_end');
+    }
+});*/
+
+Entropy.Engine.System({
+    name: "ParticleRenderer",
+    initialize: function () {
+        this.graphics = new PIXI.Graphics();
+
+        this.game.stage.addChild(this.graphics);
+    },
+    update: function (delta) {
+        var particles = this.engine.getFamily("Particles");
+
+        this.graphics.clear();
+
+        particles.iterate(function (p, pc) {
+            var length = pc.velocity.v.truncate(pc.particle.current_length, true);
+
+            this.graphics.lineStyle(2, pc.particle.color, pc.particle.current_alpha);
+            this.graphics.moveTo(pc.position.x, pc.position.y);
+            this.graphics.lineTo(pc.position.x + length.x, pc.position.y + length.y);
+        }, this);
+    },
+    remove: function () {
+        this.game.stage.removeChild(this.graphics);
+    }
+});
+
+Entropy.Engine.System({
+    name: "ParticleController",
+    update: function (delta) {
+        var particles = this.engine.getFamily("Particles");
+        var cps;
+        var t, d, c;
+
+        var node = particles.head;
+        while (node) {
+            cps = node.data.components;
+
+            cps.particle.lived_so_far += delta;
+
+            if (cps.particle.lived_so_far > cps.particle.lifetime) {
+                this.engine.markForRemoval(node.data);
                 
-                alpha = e.particle.alpha_easing(t, e.particle.alpha, c, d);
-            } else {
-                alpha = e.particle.alpha;
+                //continue;
             }
 
-            if (typeof e.particle.length_easing === "function") {
-                c = e.particle.end_length - e.particle.length;
+            t = cps.particle.lived_so_far;
+            d = cps.particle.lifetime;
 
-                length = e.particle.length_easing(t, e.particle.length, c, d);
-            } else {
-                length = e.particle.length;
+            if (typeof cps.particle.alpha_easing === "function") {
+                c = cps.particle.end_alpha - cps.particle.start_alpha;
+                
+                cps.particle.current_alpha = cps.particle.alpha_easing(t, cps.particle.start_alpha, c, d);
             }
 
-            length = e.velocity.v.truncate(length, true);
+            if (typeof cps.particle.length_easing === "function") {
+                c = cps.particle.end_length - cps.particle.start_length;
 
-            /*this.graphics.beginFill();*/
-            this.graphics.lineStyle(2, e.particle.color, alpha);
-            this.graphics.moveTo(e.position.x, e.position.y);
-            this.graphics.lineTo(e.position.x + length.x, e.position.y + length.y);
-            /*this.graphics.endFill();*/
-        }
-    }
-});
-
-Entropy.Engine.system("ParticleController", {
-    update: function (delta) {
-        var es = this.game.engine.getFamily("Particles");
-        var e;
-        var velocity;
-        var t;
-        var d;
-
-        for (var i = 0, max = es.length; i < max; i++) {
-            e = es[i].components;
-            t = e.particle.lived_so_far;
-            d = e.particle.lifetime;
-
-            e.particle.lived_so_far += delta;
-
-            if (e.particle.lived_so_far > e.particle.lifetime) {
-                this.game.engine.markForRemoval(es[i]);
-
-                continue;
+                cps.particle.current_length = cps.particle.length_easing(t, cps.particle.start_length, c, d);
             }
 
-            if (e.particle.velocity_easing !== "none") {
-                c = e.particle.end_velocity - e.particle.velocity;
+            if (typeof cps.particle.velocity_easing === "function") {
+                c = cps.particle.end_velocity - cps.particle.start_velocity;
 
-                e.velocity.v.truncate(e.particle.velocity_easing(t, e.particle.velocity, c, d));
+                cps.velocity.v.truncate(cps.particle.velocity_easing(t, cps.particle.start_velocity, c, d));
             }
+
+            node = node.next;
         }
     }
 });
 
 
-Entropy.Engine.system("EngineController", {
+Entropy.Engine.System({
+    name: "EngineController",
     update: function (delta) {
-        var engines = this.game.engine.getFamily("Engines");
-        var player = this.game.engine.getFamily("Player")[0].components;
-        var engine;
-        var vector;
+        var engines = this.engine.getFamily("Engines");
+        var player = this.engine.getFamily("Player").one().components;
 
         var rotation_vector = player.rotation.vector.negate(true);
 
-        for (var i = 0, max = engines.length; i < max; i++) {
-            engine = engines[i].components;
-
-            vector = new Entropy.Vector([engine.position.offset_x, engine.position.offset_y]);
+        engines.iterate(function (e, ec) {
+            var vector = new Entropy.Vector([ec.position.offset_x, ec.position.offset_y]);
             vector.rotate(rotation_vector.angle);
 
-            engine.position.x = player.position.x + vector.x;
-            engine.position.y = player.position.y + vector.y;
+            ec.position.x = player.position.x + vector.x;
+            ec.position.y = player.position.y + vector.y;
 
-            engine.particleemitter.angle_from = rotation_vector.angle - 45;
-            engine.particleemitter.angle_to = rotation_vector.angle + 45;
-        }
+            ec.particleemitter.angle_from = rotation_vector.angle - 45;
+            ec.particleemitter.angle_to = rotation_vector.angle + 45;
+        }, this);
     }
 });
 
-Entropy.Engine.system("AlienRenderer", {
-    init: function () {
-        /*this.graphics = new PIXI.Graphics();
-
-        this.game.stage.addChild(this.graphics);*/
-    },
+Entropy.Engine.System({
+    name: "AlienBoundingsCollision",
     update: function (delta) {
-        var es = this.game.engine.getFamily("Aliens");
+        var aliens = this.engine.getFamily("Aliens");
 
-        //this.graphics.clear();
+        aliens.iterate(function (a, ac) {
+            if (ac.position.x > 0 && 
+                ac.position.x < Entropy.WIDTH && 
+                ac.position.y > 0 && 
+                ac.position.y < Entropy.HEIGHT) {
 
-        for (var i = 0, max = es.length; i < max; i++) {
-            e = es[i].components;
+                ac.position.boundings_interaction = true;
 
-            if (e.position.x > 0 && 
-                e.position.x < Entropy.Game.WIDTH && 
-                e.position.y > 0 && 
-                e.position.y < Entropy.Game.HEIGHT) {
-                e.position.boundings_interaction = true;
             }
-
-            /*this.graphics.beginFill();*/
-            /*this.graphics.beginFill(e.circle.color);*/
-            /*this.graphics.lineStyle(2, 0xffffff, 1);
-            this.graphics.drawCircle(e.position.x, e.position.y, e.circle.radius);*/
-
-            /*this.graphics.endFill();*/
-        }
+        }, this);
     }
 });
 
-Entropy.Engine.system("LevelManagement", {
-    init: function () {
-        /*this.text = new PIXI.Text();
-        this.text.setStyle();
-        this.text.x = 10;
-        this.text.y = 10;
-
-        this.game.stage.addChild(this.text);*/
-        this.points = $("#ui-points");
-        this.level = $("#ui-level-name");
+Entropy.Engine.System({
+    name: "LevelManagement",
+    initialize: function () {
+        this.points_field = $("#ui-points");
+        this.level_field = $("#ui-level-name");
     },
     update: function (delta) {
-        var player = this.game.engine.getFamily("Player")[0].components;
+        var player = this.game.engine.getFamily("Player").one().components;
+        var level = this.game.engine.getFamily("Levels").one().components.level;
 
-        this.points.html("Punkty: " + Math.round(player.stats.points, 2) + "/" + player.level.points_to_earn +
-        "<br />Punkty stracone: " + player.stats.points_lost + "/" + player.level.max_points_to_lose);
+        this.points_field.html("Punkty: " + Math.round(player.stats.points, 2) + "/" + level.points_to_earn +
+        "<br />Punkty stracone: " + player.stats.points_lost + "/" + level.loseable);
 
-        if (player.stats.points >= player.level.points_to_earn) {
-            this.game.changeState("win");
+        if (player.stats.points >= level.points_to_earn) {
+            this.game.pause();
+            this.game.changeState("level_intro", level.next_lvl_title, level.next_lvl_subtitle, level.next_lvl_state);
         }
 
-        if (player.stats.points_lost >= player.level.max_points_to_lose) {
+        if (player.stats.points_lost >= level.loseable) {
             this.game.changeState("gameover");
         }
     }
 });
 
-Entropy.Engine.system("AlienBulletCollision", {
-    update: function (delta) {
-        var player = this.game.engine.getFamily("Player")[0].components;
-        var aliens = this.game.engine.getFamily("Aliens");
-        var bullets = this.game.engine.getFamily("Bullets");
-        var a, b;
 
-        for (var j = 0, max2 = bullets.length; j < max2; j++) {
-            b = bullets[j].components;
-
-            for (var i = 0, max = aliens.length; i < max; i++) {
-                a = aliens[i].components;
-
-                var dist = distance(a.position.x, a.position.y, b.position.x, b.position.y);
-
-                if (dist <= a.circle.radius) {
-                    a.circle.radius -= 2;
-                    this.game.engine.markForRemoval(bullets[j]);
-
-                    a.sprite.sprite.width = 2 * a.circle.radius;
-                    a.sprite.sprite.height = 2 * a.circle.radius;
-                    
-                    player.stats.points_lost += 2;
-
-                    this.game.engine.create("BulletExplosion", b.position.x, b.position.y, 0xFF002F);
-
-                    break;
-                }
-
-                if (a.circle.radius <= 0) {
-                    this.game.engine.markForRemoval(aliens[i]);
-
-                    break;
-                }
-            }
-        }
-    }
-});
-
-Entropy.Engine.system("AlienSpawning", {
-    init: function () {
+Entropy.Engine.System({
+    name: "AlienSpawning",
+    initialize: function () {
         this.spawning_time = 7000;
         this.elapsed = 0;
     },
@@ -455,58 +417,53 @@ Entropy.Engine.system("AlienSpawning", {
     }
 });
 
-Entropy.Engine.system("AlienAbsorbtion", {
+Entropy.Engine.System({
+    name: "AlienAbsorbtion",
     update: function (delta) {
-        var player = this.game.engine.getFamily("Player")[0].components;
+        var player = this.game.engine.getFamily("Player").one().components;
         var aliens = this.game.engine.getFamily("Aliens");
-        var a;
-        var dist;
-        var p_x, p_y;
 
-        for (var i = 0, max = aliens.length; i < max; i++) {
-            a = aliens[i].components;
-
-            dist = distance(player.position.x, player.position.y, a.position.x, a.position.y);
+        aliens.iterate(function (a, ac) {
+            var dist = distance(player.position.x, player.position.y, ac.position.x, ac.position.y);
 
             if (dist < 100) {
-                a.circle.radius -= 0.2;
-                player.stats.points += 0.2;
+                var drain = delta / 1000 * player.stats.teleport_speed;
+                ac.circle.radius -= drain;
+                player.stats.points += drain;
 
-                a.sprite.sprite.width = 2 * a.circle.radius;
-                a.sprite.sprite.height = 2 * a.circle.radius;
+                ac.sprite.sprite.width = 2 * ac.circle.radius;
+                ac.sprite.sprite.height = 2 * ac.circle.radius;
 
-                p_x = a.position.x - a.circle.radius + Math.random() * (2 * a.circle.radius);
-                p_y = a.position.y - a.circle.radius + Math.random() * (2 * a.circle.radius);
+                var p_x = ac.position.x - ac.circle.radius + Math.random() * (2 * ac.circle.radius);
+                var p_y = ac.position.y - ac.circle.radius + Math.random() * (2 * ac.circle.radius);
 
                 this.game.engine.create("FollowingParticle", p_x, p_y, 0x73FF00);
             }
 
-            if (a.circle.radius <= 0) {
-                this.game.engine.markForRemoval(aliens[i]);
+            if (ac.circle.radius <= 0) {
+                this.game.engine.markForRemoval(a);
             }
-        }
+        }, this);
     }
 });
 
-Entropy.Engine.system("AlienRotation", {
+Entropy.Engine.System({
+    name: "AlienRotation",
     update: function (delta) {
-        var player = this.game.engine.getFamily("Player")[0].components;
+        var player = this.game.engine.getFamily("Player").one().components;
         var aliens = this.game.engine.getFamily("Aliens");
-        var a;
-        var vector;
 
-        for (var i = 0, max = aliens.length; i < max; i++) {
-            a = aliens[i].components;
+        aliens.iterate(function (a, ac) {
+            var vector = new Entropy.Vector([player.position.x - ac.position.x, player.position.y - ac.position.y]);
 
-            vector = new Entropy.Vector([player.position.x - a.position.x, player.position.y - a.position.y]);
-
-            a.rotation.vector.setAngle(vector.angle);
-        }
+            ac.rotation.vector.setAngle(vector.angle);
+        }, this);
     }
 });
 
-Entropy.Engine.system("AlienRadius", {
-    init: function () {
+Entropy.Engine.System({
+    name: "AlienRadius",
+    initialize: function () {
         
     },
     beforeUpdate: function () {
@@ -520,53 +477,101 @@ Entropy.Engine.system("AlienRadius", {
     }
 });
 
-Entropy.Engine.system("FollowingParticleController", {
+Entropy.Engine.System({
+    name: "FollowingParticleController",
     update: function (delta) {
-        var player = this.game.engine.getFamily("Player")[0].components;
-        var particles = this.game.engine.getFamily("FollowingPlayer");
-        var p;
-        var vector;
+        var player = this.engine.getFamily("Player").one().components;
+        var particles = this.engine.getFamily("FollowingPlayer");
 
-        for (var i = 0, max = particles.length; i < max; i++) {
-            p = particles[i].components;
-
-            if (distance(player.position.x, player.position.y, p.position.x, p.position.y) < 10) {
-                this.game.engine.markForRemoval(particles[i]);
+        particles.iterate(function (p, pc) {
+            if (distance(player.position.x, player.position.y, pc.position.x, pc.position.y) < 10) {
+                this.game.engine.markForRemoval(p);
             } else {
-                vector = new Entropy.Vector([player.position.x - p.position.x, player.position.y - p.position.y]);
+                var vector = new Entropy.Vector([player.position.x - pc.position.x, player.position.y - pc.position.y]);
 
-                p.velocity.v.setAngle(vector.angle);
+                pc.velocity.v.setAngle(vector.angle);
             }
-        }
+        }, this);
     },
 });
 
-Entropy.Engine.system("FollowingParticleRenderer", {
-    init: function () {
+
+Entropy.Engine.System({
+    name: "FollowingParticleRenderer",
+    initialize: function () {
         this.graphics = new PIXI.Graphics();
 
         this.game.stage.addChild(this.graphics);
     },
-    beforeUpdate: function () {
-
-    },
     update: function (delta) {
-        var es = this.game.engine.getFamily("FollowingPlayer");
+        var es = this.engine.getFamily("FollowingPlayer");
 
         this.graphics.clear();
 
-        for (var i = 0, max = es.length; i < max; i++) {
-            e = es[i].components;
-
-            /*this.graphics.beginFill();*/
-            /*this.graphics.beginFill(e.circle.color);*/
-            this.graphics.lineStyle(1, e.circle.color, 1);
-            this.graphics.drawCircle(e.position.x, e.position.y, e.circle.radius);
-
-            /*this.graphics.endFill();*/
-        }
+        es.iterate(function (e, c) {
+            this.graphics.lineStyle(1, c.circle.color, 1);
+            this.graphics.drawCircle(c.position.x, c.position.y, c.circle.radius);
+        }, this);
     },
-    afterUpdate: function () {
+    remove: function () {
+        this.game.stage.removeChild(this.graphics);
+    }
+});
 
+Entropy.Engine.System({
+    name: "AlienBulletCollision",
+    update: function (delta) {
+        var player = this.engine.getFamily("Player").one().components;
+        var aliens = this.engine.getFamily("Aliens");
+        var bullets = this.game.engine.getFamily("Bullets");
+
+        bullets.iterate(function (b, bc) {
+            aliens.iterate(function (a, ac) {
+                var dist = distance(ac.position.x, ac.position.y, bc.position.x, bc.position.y);
+
+                if (dist <= ac.circle.radius) {
+                    ac.circle.radius -= 2;
+
+                    this.engine.markForRemoval(b);
+
+                    ac.sprite.sprite.width = 2 * ac.circle.radius;
+                    ac.sprite.sprite.height = 2 * ac.circle.radius;
+                    
+                    player.stats.points_lost += 2;
+                    //debugger;
+                    this.engine.create("BulletExplosion", bc.position.x, bc.position.y, 0xFF002F);
+                    aliens.breakIteration();
+                }
+
+                
+                if (ac.circle.radius <= 0) {
+                    this.game.engine.markForRemoval(a);
+
+                    aliens.breakIteration();
+                }
+            }, this);
+        }, this);
+    }
+});
+
+Entropy.Engine.System({
+    name: "PowerUpSpawning",
+    initialize: function () {
+        this.time_from_last_spawn = 0;
+    },
+    update: function (delta) {
+        var level = this.engine.getFamily("Levels").one().components.level;
+
+        if (this.time_from_last_spawn <= 0) {
+            var type_num = Math.floor(Math.random() * level.available_powerups.length);
+
+            var x = 50 + (Math.random() * (Entropy.WIDTH - 100));
+            var y = 50 + (Math.random() * (Entropy.HEIGHT - 100));
+
+            this.engine.create("PowerUp", x, y, level.available_powerups[type_num]);
+            this.time_from_last_spawn = level.powerup_interval;
+        } else {
+            this.time_from_last_spawn -= delta;
+        }
     }
 });

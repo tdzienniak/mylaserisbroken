@@ -1,10 +1,11 @@
 {
     "manifest": [
         "libs/pixi.min.js",
-        "../Entropy_github/build/entropy.js",
-        "src/statesii.js",
+        "libs/entropy.min.js",
+        "src/helpers.js",
+        "src/states.js",
         "src/patterns.js",
-        "src/systemsii.js",
+        "src/systems.js",
         "src/components.js",
         {
             "src": "assets/ship2.png",
